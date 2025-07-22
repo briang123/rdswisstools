@@ -160,3 +160,23 @@
     @apply bg-background text-foreground;
   }
 }
+
+button,
+a {
+  cursor: pointer;
+}
+
+/* Sidebar chevron rotation for collapsible menus */
+.chevron-rotate {
+  transition: transform 0.2s;
+  transform: rotate(0deg);
+}
+[data-state='open'] .chevron-rotate {
+  transform: rotate(90deg);
+}
+
+a[href='#']:hover,
+button[href='#']:hover,
+.cursor-not-allowed:hover {
+  cursor: not-allowed !important;
+}
