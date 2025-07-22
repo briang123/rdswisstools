@@ -10,7 +10,6 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { DataTable } from '@/components/data-table';
-import data from '../../dashboard/data.json';
 import React from 'react';
 import { FileUploader } from '../file-uploader';
 import { ResultsCleanerClientArea } from './client-area';

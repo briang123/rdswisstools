@@ -6,6 +6,8 @@ import {
   IconLogout,
   IconNotification,
   IconUserCircle,
+  IconShieldLock,
+  IconFileText,
 } from '@tabler/icons-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -24,6 +26,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { useRouter } from 'next/navigation';
 
 export function NavUser({
   user,
@@ -35,6 +38,7 @@ export function NavUser({
   };
 }) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
 
   return (
     <SidebarMenu>
@@ -87,6 +91,14 @@ export function NavUser({
               <DropdownMenuItem>
                 <IconNotification />
                 Notifications
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/privacy')}>
+                <IconShieldLock />
+                Privacy Policy
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/terms')}>
+                <IconFileText />
+                Terms & Conditions
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
