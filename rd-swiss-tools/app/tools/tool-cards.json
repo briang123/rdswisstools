@@ -1,0 +1,14 @@
+{
+  "title": "Results Cleaner",
+  "description": "Clean and improve pasted or uploaded race results",
+  "badge": "New",
+  "icon": "IconFileDescription",
+  "cta": {
+    "label": "Try it",
+    "href": "/tools/results-cleaner"
+  },
+  "footer": {
+    "main": "Paste or upload race results to automatically clean, fix, and format your data for easy use.",
+    "sub": "Supports copy-paste, CSV, JSON, Markdown, and images (OCR)."
+  }
+}
