@@ -1,12 +1,15 @@
 'use client';
 import React, { useRef, useState } from 'react';
+import { useFileUpload } from '@/hooks/use-file-upload';
+import { useDragAndDrop } from '@/hooks/use-drag-and-drop';
 
 const ACCEPTED_TYPES = ['.csv', '.json', '.md', '.html', '.xls', '.xlsx', 'image/*'];
 
 export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { uploading, uploadFile } = useFileUpload();
+  const { dragActive, handleDrag, handleDrop } = useDragAndDrop((file) => setSelectedFile(file));
 
   const handleFile = (file: File) => {
     setSelectedFile(file);
@@ -18,29 +21,12 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
     }
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0]);
-    }
-  };
-
-  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
-  };
-
-  const handleImport = () => {
-    if (selectedFile) {
+  const handleImport = async () => {
+    if (!selectedFile) return;
+    await uploadFile(selectedFile, () => {
       onFile(selectedFile);
-    }
+      setSelectedFile(null);
+    });
   };
 
   return (
@@ -79,10 +65,10 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
                 e.stopPropagation();
                 handleImport();
               }}
-              disabled={!selectedFile}
+              disabled={!selectedFile || uploading}
               type="button"
             >
-              Import File
+              {uploading ? 'Uploading...' : 'Import File'}
             </button>
           </div>
         )}
