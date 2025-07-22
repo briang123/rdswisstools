@@ -3,6 +3,7 @@ import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { AIChatSheet } from '@/components/ai-chat-sheet';
 
 const geistSans = GeistSans;
 const geistMono = GeistMono;
@@ -27,6 +28,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <AIChatSheet />
         </ThemeProvider>
       </body>
     </html>
