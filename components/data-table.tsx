@@ -204,24 +204,23 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
     }));
     const actionsColumn: ColumnDef<unknown> = {
       id: 'actions',
-      cell: () => (
+      cell: ({ row }) => (
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-              size="icon"
-            >
+          <DropdownMenuTrigger>
+            <button className="data-[state=open]:bg-muted text-muted-foreground flex size-8">
               <IconDotsVertical />
               <span className="sr-only">Open menu</span>
-            </Button>
+            </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Make a copy</DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => alert(`Edit row ${row.id}`)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => alert(`Copy row ${row.id}`)}>
+              Make a copy
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+            <DropdownMenuItem variant="destructive" onClick={() => alert(`Delete row ${row.id}`)}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
