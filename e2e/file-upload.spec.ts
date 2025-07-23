@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
+import fs from 'fs';
 
 const FILE_UPLOAD_URL = '/tools/results-cleaner';
 const FILE_INPUT_SELECTOR = '[data-testid="file-input"]';
@@ -7,6 +8,8 @@ const DROP_AREA_SELECTOR = '[data-testid="file-drop-area"]';
 const IMPORT_BUTTON_SELECTOR = '[data-testid="import-file-button"]';
 const DEBUG_MSG_SELECTOR = '[data-testid="debug-msg"]';
 const DATA_TABLE_SELECTOR = '[data-testid="data-table-root"]';
+const PASTE_DATA_BTN_SELECTOR = '[data-testid="paste-data-open-btn"]';
+const PASTE_DATA_TEXTAREA_SELECTOR = '[data-testid="paste-data-textarea"]';
 
 const fixtures = [
   {
@@ -68,6 +71,26 @@ test.describe('File Upload', () => {
       await expect(debugMsg).toContainText('Upload complete', { timeout: 10000 });
       await expect(debugMsg).toContainText(file, { timeout: 10000 });
       // Validate table content (wait for table to update)
+      const table = page.locator(DATA_TABLE_SELECTOR);
+      for (const value of checks) {
+        await expect(table).toContainText(value, { timeout: 10000 });
+      }
+    });
+  }
+});
+
+test.describe('Paste Data', () => {
+  for (const { name, file, checks } of fixtures) {
+    test(`should paste and parse ${name} fixture`, async ({ page }) => {
+      await page.goto(FILE_UPLOAD_URL);
+      // Open the paste data drawer
+      await page.click(PASTE_DATA_BTN_SELECTOR);
+      // Read the fixture file content
+      const filePath = path.resolve(__dirname, 'fixtures', file);
+      const fileContent = fs.readFileSync(filePath, 'utf8');
+      // Paste the content into the textarea
+      await page.fill(PASTE_DATA_TEXTAREA_SELECTOR, fileContent);
+      // Wait for the table to update
       const table = page.locator(DATA_TABLE_SELECTOR);
       for (const value of checks) {
         await expect(table).toContainText(value, { timeout: 10000 });

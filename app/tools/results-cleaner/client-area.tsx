@@ -6,6 +6,7 @@ import data from '../../data/sample_5k.json';
 import { getParserByFileName } from '../../services/parser-factory';
 import { cleanTableData } from '@/lib/table-data-cleaner';
 import confetti from 'canvas-confetti';
+import { PasteDataDrawer } from '@/components/paste-data-drawer';
 
 export function ResultsCleanerClientArea() {
   const [tableData, setTableData] = useState<Record<string, unknown>[]>(data);
@@ -30,6 +31,18 @@ export function ResultsCleanerClientArea() {
   return (
     <>
       <FileUploader onFile={handleFile} />
+      <PasteDataDrawer
+        onParsed={(result) => {
+          // Accept only arrays of records
+          if (
+            result &&
+            typeof result === 'object' &&
+            Array.isArray((result as { parsed: unknown }).parsed)
+          ) {
+            setTableData((result as { parsed: unknown[] }).parsed as Record<string, unknown>[]);
+          }
+        }}
+      />
       <DataTable data={tableData} />
     </>
   );

@@ -1,4 +1,5 @@
 import { ParserGateway } from './parser-gateway';
+import { removeEmptyColumns } from '../../lib/table-data-cleaner';
 
 export class JsonParserService implements ParserGateway {
   async parse(input: File | string): Promise<Record<string, unknown>[]> {
@@ -14,21 +15,23 @@ export class JsonParserService implements ParserGateway {
     } catch {
       return [];
     }
+    let rows: Record<string, unknown>[] = [];
     if (Array.isArray(data)) {
-      return this.parseComplexArray(data);
+      rows = this.parseComplexArray(data);
     } else if (typeof data === 'object' && data !== null) {
       // Always use 'data' array as table data if present
       if (
         Object.prototype.hasOwnProperty.call(data, 'data') &&
         Array.isArray((data as Record<string, unknown>).data)
       ) {
-        return this.parseComplexArray((data as Record<string, unknown>).data as unknown[]);
+        rows = this.parseComplexArray((data as Record<string, unknown>).data as unknown[]);
+      } else {
+        rows = this.isSimpleObject(data)
+          ? this.parseSimpleObject(data as Record<string, unknown>)
+          : this.parseComplexObject(data as Record<string, unknown>);
       }
-      return this.isSimpleObject(data)
-        ? this.parseSimpleObject(data as Record<string, unknown>)
-        : this.parseComplexObject(data as Record<string, unknown>);
     }
-    return [];
+    return removeEmptyColumns(rows);
   }
 
   private isSimpleObject(obj: unknown): boolean {

@@ -17,7 +17,10 @@ export function getParserByFileName(fileName: string): ParserGateway | null {
   const ext = fileName.split('.').pop()?.toLowerCase();
   switch (ext) {
     case 'csv':
-      return new CsvParserService();
+      return new CsvParserService(',');
+    case 'tsv':
+    case 'tab':
+      return new CsvParserService('\t');
     case 'md':
     case 'markdown':
       return new MarkdownParserService();
@@ -33,4 +36,32 @@ export function getParserByFileName(fileName: string): ParserGateway | null {
     default:
       return null;
   }
+}
+
+// Detect parser by content heuristics
+export function getParserByContent(content: string): ParserGateway | null {
+  const trimmed = content.trim();
+  if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+    return new JsonParserService();
+  }
+  if (
+    trimmed.startsWith('<!DOCTYPE html') ||
+    trimmed.startsWith('<html') ||
+    trimmed.includes('<table')
+  ) {
+    return new HtmlTableParserService();
+  }
+  if (/^\|.*\|\s*\n\|[-:| ]+\|/m.test(trimmed)) {
+    return new MarkdownParserService();
+  }
+  if (trimmed.includes('\t') && /\n/.test(trimmed)) {
+    // crude TSV check: has tabs and newlines
+    return new CsvParserService('\t');
+  }
+  if (trimmed.includes(',') && /\n/.test(trimmed)) {
+    // crude CSV check: has commas and newlines
+    return new CsvParserService(',');
+  }
+  // Excel: not supported for pasted text (binary only)
+  return null;
 }

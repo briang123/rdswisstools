@@ -61,4 +61,19 @@ describe('MarkdownParserService (ParserGateway implementation)', () => {
     const result = await parser.parse(fileLike);
     expect(result).toEqual([{ a: '1', b: '2' }]);
   });
+
+  it('should fill missing values with empty string and keep all columns', async () => {
+    const md = `
+| a | b | c |
+|---|---|---|
+| 1 | 2 |
+| 3 | 4 | 5 |
+`;
+    const parser = new MarkdownParserService();
+    const result = await parser.parse(md);
+    expect(result).toEqual([
+      { a: '1', b: '2', c: '' },
+      { a: '3', b: '4', c: '5' },
+    ]);
+  });
 });

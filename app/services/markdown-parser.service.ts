@@ -1,4 +1,5 @@
 import { ParserGateway } from './parser-gateway';
+import { removeEmptyColumns } from '../../lib/table-data-cleaner';
 
 export class MarkdownParserService implements ParserGateway {
   async parse(input: File | string): Promise<Record<string, unknown>[]> {
@@ -8,7 +9,8 @@ export class MarkdownParserService implements ParserGateway {
     } else {
       mdText = await input.text();
     }
-    return this.parseMarkdownTable(mdText);
+    const data = this.parseMarkdownTable(mdText);
+    return removeEmptyColumns(data);
   }
 
   private parseMarkdownTable(md: string): Record<string, unknown>[] {
@@ -30,7 +32,7 @@ export class MarkdownParserService implements ParserGateway {
       const values = line
         .split('|')
         .map((v) => v.trim())
-        .filter(Boolean);
+        .filter((_, idx) => (idx === 0 ? false : idx === headers.length + 1 ? false : true)); // skip first and last empty
       const row: Record<string, unknown> = {};
       headers.forEach((header, idx) => {
         row[header] = values[idx] ?? '';

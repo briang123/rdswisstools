@@ -47,4 +47,31 @@ describe('CsvParserService (ParserGateway implementation)', () => {
     const result = await parser.parse(fileLike);
     expect(result).toEqual([{ a: '1', b: '2' }]);
   });
+
+  it('should correctly parse a simple TSV string into an array of objects', async () => {
+    const tsv = 'name\tage\nAlice\t30\nBob\t25';
+    const tsvParser = new CsvParserService('\t');
+    const result = await tsvParser.parse(tsv);
+    expect(result).toEqual([
+      { name: 'Alice', age: '30' },
+      { name: 'Bob', age: '25' },
+    ]);
+  });
+
+  it('should handle rows with missing values in TSV by filling with empty strings', async () => {
+    const tsv = 'name\tage\tcity\nAlice\t30\nBob\t25\tNew York';
+    const tsvParser = new CsvParserService('\t');
+    const result = await tsvParser.parse(tsv);
+    expect(result).toEqual([
+      { name: 'Alice', age: '30', city: '' },
+      { name: 'Bob', age: '25', city: 'New York' },
+    ]);
+  });
+
+  it('should trim whitespace from headers and values in TSV', async () => {
+    const tsv = ' name \t age \n Alice \t 30 ';
+    const tsvParser = new CsvParserService('\t');
+    const result = await tsvParser.parse(tsv);
+    expect(result).toEqual([{ name: 'Alice', age: '30' }]);
+  });
 });

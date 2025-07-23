@@ -1,4 +1,5 @@
 import { ParserGateway } from './parser-gateway';
+import { removeEmptyColumns } from '../../lib/table-data-cleaner';
 
 export class HtmlTableParserService implements ParserGateway {
   async parse(input: File | string): Promise<Record<string, unknown>[]> {
@@ -11,10 +12,10 @@ export class HtmlTableParserService implements ParserGateway {
     // Only use DOMParser in the browser
     if (typeof window !== 'undefined' && typeof window.DOMParser !== 'undefined') {
       const doc = new window.DOMParser().parseFromString(html, 'text/html');
-      return this.parseAllTableTypes(doc);
+      return removeEmptyColumns(this.parseAllTableTypes(doc));
     }
     // Fallback: only parse <table> with regex (very limited, for SSR)
-    return this.parseTableTagRegex(html);
+    return removeEmptyColumns(this.parseTableTagRegex(html));
   }
 
   private parseAllTableTypes(doc: Document): Record<string, unknown>[] {

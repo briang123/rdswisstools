@@ -197,12 +197,17 @@ export function DataTable({ data }: { data: unknown[] }) {
         enableHiding: false,
       },
     ];
-    const dataColumns = dataKeys.map((key) => ({
-      accessorKey: key,
-      header: key,
-      cell: ({ row }: { row: Row<unknown> }) =>
-        String((row.original as Record<string, unknown>)[key] ?? ''),
-    }));
+    const dataColumns = dataKeys.map((key, idx) => {
+      const safeKey =
+        key && typeof key === 'string' && key.trim() !== '' ? key : `Column ${idx + 1}`;
+      return {
+        id: safeKey,
+        accessorKey: key,
+        header: safeKey,
+        cell: ({ row }: { row: Row<unknown> }) =>
+          String((row.original as Record<string, unknown>)[key] ?? ''),
+      };
+    });
     const actionsColumn: ColumnDef<unknown> = {
       id: 'actions',
       cell: ({ row }) => (
