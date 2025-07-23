@@ -5,6 +5,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AIChatSheet } from '@/components/ai-chat-sheet';
 import { Toaster } from '@/components/ui/sonner';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const geistSans = GeistSans;
 const geistMono = GeistMono;
@@ -33,6 +34,7 @@ export default function RootLayout({
           <AIChatSheet />
         </ThemeProvider>
         <Toaster />
+        <SpeedInsights />
       </body>
     </html>
   );
