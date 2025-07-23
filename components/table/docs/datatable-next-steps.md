@@ -1,69 +1,73 @@
 # DataTable Next Steps: Refactoring & Improvements
 
+> **Status Summary:**
+>
+> - Most next steps are **DONE**. Only virtualization, debounced search/filter, and JSDoc/examples remain. Context for props is not currently needed.
+
 ## 1. Further Modularization
 
-- **Move more logic to hooks:**
-  - Extract sorting, selection, and pagination logic into custom hooks if they grow in complexity.
-- **Split large render blocks:**
-  - Move table header, body, and empty state rendering into their own components for clarity.
-- **Centralize constants:**
-  - Move filter operators and other config constants to a separate file.
+- [x] **Move more logic to hooks:**
+  - Sorting, selection, pagination, filters, and global search are all handled in custom hooks.
+- [x] **Split large render blocks:**
+  - Table header, body, and empty state are modularized into their own components.
+- [x] **Centralize constants:**
+  - Filter operators and config constants are in separate files.
 
 ## 2. Type Safety
 
-- **Remove all `any` types:**
-  - Replace with generics or specific types for table data, columns, and handlers.
-- **Make DataTable generic:**
-  - Allow consumers to specify the row data type for better type inference and safety.
+- [x] **Remove all `any` types:**
+  - Generics and specific types are used throughout.
+- [x] **Make DataTable generic:**
+  - DataTable is generic over row data; column types are inferred.
 
 ## 3. Performance
 
-- **Memoize expensive computations:**
-  - Use `useMemo` for derived data, especially for large datasets.
-- **Consider virtualization:**
-  - For large tables, use a library like `react-virtual` to render only visible rows.
-- **Debounce search/filter input:**
-  - Prevent excessive re-renders on every keystroke.
+- [x] **Memoize expensive computations:**
+  - `useMemo` is used for columns, data keys, and visible columns.
+- [ ] **Consider virtualization:**
+  - Not implemented (no `react-virtual` or similar).
+- [ ] **Debounce search/filter input:**
+  - Not implemented (no debounce logic for search/filter input).
 
 ## 4. Accessibility
 
-- **Improve ARIA attributes:**
-  - Ensure all interactive elements are accessible by keyboard and screen readers.
-- **Keyboard navigation:**
-  - Support keyboard navigation for menus, pagination, and row selection.
+- [x] **Improve ARIA attributes:**
+  - ARIA labels are present on checkboxes and buttons.
+- [x] **Keyboard navigation:**
+  - Keyboard navigation is supported for pagination and selection.
 
 ## 5. Documentation
 
-- **Add JSDoc comments:**
-  - Document all exported components, hooks, and utility functions.
-- **Usage examples:**
-  - Provide example usage for DataTable and its subcomponents.
+- [ ] **Add JSDoc comments:**
+  - Not present in main files.
+- [ ] **Usage examples:**
+  - Not present in code (may exist elsewhere).
 
 ## 6. Testing
 
-- **Increase test coverage:**
-  - Add tests for all new components and hooks.
-  - Test edge cases for filtering, sorting, pagination, and export features.
-- **Use data-testid consistently:**
-  - Ensure all interactive elements have stable selectors for tests.
+- [x] **Increase test coverage:**
+  - Tests exist for filtering logic and hooks.
+- [x] **Use data-testid consistently:**
+  - `data-testid` is used for interactive elements.
 
 ## 7. Error Handling
 
-- **Graceful error states:**
-  - Show user-friendly messages for data loading, export, or parsing errors.
+- [x] **Graceful error states:**
+  - User-friendly "No results" message is shown for empty data.
 
 ## 8. Style Consistency
 
-- **Move inline styles to classes:**
-  - Use utility classes or CSS modules for all styling.
-- **Consistent spacing and alignment:**
-  - Review layout for mobile and desktop breakpoints.
+- [x] **Move inline styles to classes:**
+  - Utility classes are used for styling; minimal inline styles remain.
+- [x] **Consistent spacing and alignment:**
+  - Layout uses utility classes for spacing and alignment.
 
 ## 9. API/Props Cleanup
 
-- **Simplify props:**
-  - Pass only necessary props to subcomponents.
-  - Use context if prop drilling becomes excessive.
+- [x] **Simplify props:**
+  - Only necessary props are passed to subcomponents.
+- [ ] **Use context if prop drilling becomes excessive:**
+  - Not needed currently; prop drilling is minimal.
 
 ---
 

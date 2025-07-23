@@ -9,9 +9,9 @@ export function customFilterFn(
   const { op, val } = filterValue;
   switch (op) {
     case 'equals':
-      return cellValue === val;
+      return cellValue.toLowerCase() === val.toLowerCase();
     case 'notEquals':
-      return cellValue !== val;
+      return cellValue.toLowerCase() !== val.toLowerCase();
     case 'contains':
       return cellValue.toLowerCase().includes(val.toLowerCase());
     case 'notContains':

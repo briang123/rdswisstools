@@ -50,6 +50,7 @@ import {
 import { PaginationControls } from '../ui/pagination-controls';
 import { ColumnVisibilityMenu } from '../ui/column-visibility-menu';
 import { RowActionsMenu } from '../ui/row-actions-menu';
+import { TableHeaderCheckbox } from '@/components/table/core/TableHeaderCheckbox';
 
 // Local table abstractions
 import { useDataTable } from '../core/use-data-table';
@@ -75,7 +76,7 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
     pagination,
     setPagination,
     value: globalSearch,
-    onChange: onGlobalSearchChange,
+    setValue: onGlobalSearchChange,
     filterMenuOpen,
     setFilterMenuOpen,
     logicType,
@@ -108,18 +109,7 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
       },
       {
         id: 'select',
-        header: ({ table }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && 'indeterminate')
-              }
-              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-              aria-label="Select all"
-            />
-          </div>
-        ),
+        header: ({ table }) => <TableHeaderCheckbox table={table} />,
         cell: ({ row }) => (
           <div className="flex items-center justify-center">
             <Checkbox

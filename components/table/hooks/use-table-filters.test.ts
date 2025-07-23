@@ -69,12 +69,6 @@ describe('useTableFilters', () => {
     act(() => {
       result.current.handleAddFilter();
     });
-    console.log(
-      'draftFilters:',
-      result.current.draftFilters,
-      'newFilter:',
-      result.current.newFilter,
-    );
     expect(result.current.draftFilters.length).toBe(1);
     expect(result.current.draftFilters[0]).toMatchObject({
       column: 'name',

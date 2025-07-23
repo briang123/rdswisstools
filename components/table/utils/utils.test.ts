@@ -9,11 +9,17 @@ jest.mock('jspdf-autotable', () => jest.fn());
 
 import * as utils from './utils';
 import type { TableRow } from './utils';
+import { customFilterFn } from './filters';
+import type { Row } from '@tanstack/react-table';
 const { exportToCSV, exportToJSON, exportToHTML, exportToMarkdown, handleCopy, handleSave } = utils;
 
 beforeAll(() => {
   global.URL.createObjectURL = jest.fn(() => 'blob:mock');
-  global.Blob = jest.fn(() => ({})) as any;
+  // Properly mock Blob constructor for type safety
+  global.Blob = Object.assign(
+    jest.fn(() => ({})),
+    { prototype: {} },
+  ) as unknown as typeof Blob;
   document.body.appendChild = jest.fn();
   document.body.removeChild = jest.fn();
 });
@@ -110,5 +116,44 @@ describe('table utils', () => {
       handleSave('csv', data, columns, toast, 'testfile');
       expect(toast.error).toHaveBeenCalled();
     });
+  });
+});
+
+// Helper type for a minimal Row-like object
+interface MockRow {
+  getValue: (col: string) => string | undefined;
+}
+
+describe('customFilterFn', () => {
+  // Helper to mock a TanStack row
+  const makeRow = (val: string): { getValue: (col: string) => string | undefined } => ({
+    getValue: (col: string) => (col === 'name' ? val : undefined),
+  });
+
+  it('equals is case-insensitive', () => {
+    expect(
+      customFilterFn(makeRow('Alice') as Row<unknown>, 'name', { op: 'equals', val: 'alice' }),
+    ).toBe(true);
+    expect(
+      customFilterFn(makeRow('ALICE') as Row<unknown>, 'name', { op: 'equals', val: 'alice' }),
+    ).toBe(true);
+    expect(
+      customFilterFn(makeRow('Alice') as Row<unknown>, 'name', { op: 'equals', val: 'Bob' }),
+    ).toBe(false);
+  });
+
+  it('notEquals is case-insensitive', () => {
+    expect(
+      customFilterFn(makeRow('Alice') as Row<unknown>, 'name', {
+        op: 'notEquals',
+        val: 'bob',
+      }),
+    ).toBe(true);
+    expect(
+      customFilterFn(makeRow('ALICE') as Row<unknown>, 'name', {
+        op: 'notEquals',
+        val: 'alice',
+      }),
+    ).toBe(false);
   });
 });

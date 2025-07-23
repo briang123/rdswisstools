@@ -1,10 +1,19 @@
-import { useState, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function useGlobalSearch(initialValue = '') {
   const [value, setValue] = useState(initialValue);
-  const onChange = useCallback((newValue: string) => setValue(newValue), []);
-  return { value, onChange, setValue };
-}
+  const [debouncedValue, setDebouncedValue] = useState(initialValue);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-// Fix for TypeScript module resolution
-export {};
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedValue(value);
+    }, 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [value]);
+
+  return { value, setValue, debouncedValue };
+}
