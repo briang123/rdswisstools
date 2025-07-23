@@ -30,19 +30,20 @@ export function ResultsCleanerClientArea() {
 
   return (
     <>
-      <FileUploader onFile={handleFile} />
-      <PasteDataDrawer
-        onParsed={(result) => {
-          // Accept only arrays of records
-          if (
-            result &&
-            typeof result === 'object' &&
-            Array.isArray((result as { parsed: unknown }).parsed)
-          ) {
-            setTableData((result as { parsed: unknown[] }).parsed as Record<string, unknown>[]);
-          }
-        }}
-      />
+      <FileUploader onFile={handleFile}>
+        <PasteDataDrawer
+          onParsed={(result) => {
+            // Accept only arrays of records
+            if (
+              result &&
+              typeof result === 'object' &&
+              Array.isArray((result as { parsed: unknown }).parsed)
+            ) {
+              setTableData((result as { parsed: unknown[] }).parsed as Record<string, unknown>[]);
+            }
+          }}
+        />
+      </FileUploader>
       <DataTable data={tableData} />
     </>
   );

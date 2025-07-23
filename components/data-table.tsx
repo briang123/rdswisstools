@@ -118,8 +118,107 @@ import {
   MenubarShortcut,
   MenubarCheckboxItem,
 } from '@/components/ui/menubar';
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
-// Remove static schema and columns
+// Export utilities for array-of-objects and visible columns
+function exportToCSV(data: Record<string, unknown>[], columns: string[]): string {
+  const headerRow = columns;
+  const dataRows = data.map((row) => columns.map((col) => row[col] ?? ''));
+  return Papa.unparse([headerRow, ...dataRows]);
+}
+
+function exportToJSON(data: Record<string, unknown>[], columns: string[]): string {
+  const jsonData = data.map((row) => {
+    const obj: Record<string, unknown> = {};
+    columns.forEach((col) => {
+      obj[col] = row[col] ?? '';
+    });
+    return obj;
+  });
+  return JSON.stringify(jsonData, null, 2);
+}
+
+function exportToHTML(data: Record<string, unknown>[], columns: string[]): string {
+  let html = '<table border="1" cellpadding="5" cellspacing="0">\n';
+  html += '  <thead>\n    <tr>\n';
+  columns.forEach((col) => {
+    html += `      <th>${col}</th>\n`;
+  });
+  html += '    </tr>\n  </thead>\n';
+  html += '  <tbody>\n';
+  data.forEach((row) => {
+    html += '    <tr>\n';
+    columns.forEach((col) => {
+      html += `      <td>${row[col] ?? ''}</td>\n`;
+    });
+    html += '    </tr>\n';
+  });
+  html += '  </tbody>\n</table>';
+  return html;
+}
+
+function exportToMarkdown(data: Record<string, unknown>[], columns: string[]): string {
+  let md = '| ' + columns.join(' | ') + ' |\n';
+  md += '| ' + columns.map(() => '---').join(' | ') + ' |\n';
+  data.forEach((row) => {
+    md += '| ' + columns.map((col) => row[col] ?? '').join(' | ') + ' |\n';
+  });
+  return md;
+}
+
+function exportToXLSX(data: Record<string, unknown>[], columns: string[], filename: string): void {
+  const headerRow = columns;
+  const dataRows = data.map((row) => columns.map((col) => row[col] ?? ''));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([headerRow, ...dataRows]);
+  XLSX.utils.book_append_sheet(wb, ws, 'Table Data');
+  XLSX.writeFile(wb, filename);
+}
+
+function exportToPDF(data: Record<string, unknown>[], columns: string[], filename: string): void {
+  const doc = new jsPDF();
+  const headerRow = columns;
+  const dataRows = data.map((row) => columns.map((col) => row[col] ?? ''));
+  autoTable(doc, {
+    head: [headerRow],
+    body: dataRows,
+    startY: 20,
+    margin: { top: 20 },
+    styles: { fontSize: 8, cellPadding: 2 },
+    headStyles: { fillColor: [79, 70, 229] },
+  });
+  doc.setFontSize(16);
+  doc.text('Table Data', 14, 15);
+  doc.save(filename);
+}
+
+function downloadBlob(content: string, filename: string, contentType: string): void {
+  const blob = new Blob([content], { type: contentType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+// Utility: Convert array-of-objects to TableData
+function arrayToTableData(data: Record<string, unknown>[], visibleColumns: string[]): any {
+  const columns = visibleColumns.map((key) => ({
+    id: key,
+    label: key,
+    visible: true,
+  }));
+  return {
+    columns,
+    rows: data.map((row) => ({
+      cells: Object.fromEntries(columns.map((col) => [col.id, { value: row[col.id] ?? '' }])),
+    })),
+  };
+}
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
@@ -141,7 +240,7 @@ function DragHandle({ id }: { id: string }) {
 
 // Remove static columns
 
-export function DataTable({ data }: { data: unknown[] }) {
+export function DataTable({ data }: { data: Record<string, unknown>[] }) {
   // Remove internal state for data
   // const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
@@ -260,28 +359,95 @@ export function DataTable({ data }: { data: unknown[] }) {
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active && over && active.id !== over.id) {
-      // Optionally, you can implement row reordering logic here if needed
+  // Get visible columns from table state
+  const visibleColumns = React.useMemo(
+    () =>
+      table
+        .getAllColumns()
+        .filter(
+          (col) =>
+            col.getIsVisible() && col.id !== 'drag' && col.id !== 'select' && col.id !== 'actions',
+        )
+        .map((col) => col.id),
+    [table],
+  );
+
+  // Export handlers
+  function handleCopy(format: string) {
+    let content = '';
+    switch (format) {
+      case 'csv':
+        content = exportToCSV(data, visibleColumns);
+        break;
+      case 'json':
+        content = exportToJSON(data, visibleColumns);
+        break;
+      case 'html':
+        content = exportToHTML(data, visibleColumns);
+        break;
+      case 'markdown':
+        content = exportToMarkdown(data, visibleColumns);
+        break;
+      default:
+        return;
     }
+    navigator.clipboard.writeText(content);
+    toast.success(`Copied table data as ${format.toUpperCase()} to clipboard`);
   }
 
-  // Add handlers for copy/save actions
-  function handleCopy(format: string) {
-    // TODO: Implement copy logic for each format
-    // e.g., copyToClipboard(formatTableData(data, format))
-    alert(`Copy as ${format} (not yet implemented)`);
-  }
   function handleSave(format: string) {
-    // TODO: Implement save logic for each format
-    // e.g., downloadFile(formatTableData(data, format), `table.${format}`)
-    alert(`Save as ${format} (not yet implemented)`);
+    let content = '';
+    let mime = '';
+    let filename = 'table';
+    switch (format) {
+      case 'csv':
+        content = exportToCSV(data, visibleColumns);
+        mime = 'text/csv';
+        filename += '.csv';
+        downloadBlob(content, filename, mime);
+        toast.success('Saved table data as CSV');
+        break;
+      case 'json':
+        content = exportToJSON(data, visibleColumns);
+        mime = 'application/json';
+        filename += '.json';
+        downloadBlob(content, filename, mime);
+        toast.success('Saved table data as JSON');
+        break;
+      case 'html':
+        content = exportToHTML(data, visibleColumns);
+        mime = 'text/html';
+        filename += '.html';
+        downloadBlob(content, filename, mime);
+        toast.success('Saved table data as HTML');
+        break;
+      case 'markdown':
+        content = exportToMarkdown(data, visibleColumns);
+        mime = 'text/markdown';
+        filename += '.md';
+        downloadBlob(content, filename, mime);
+        toast.success('Saved table data as Markdown');
+        break;
+      case 'excel':
+        exportToXLSX(data, visibleColumns, 'table.xlsx');
+        toast.success('Saved table data as Excel');
+        break;
+      case 'pdf':
+        exportToPDF(data, visibleColumns, 'table.pdf');
+        toast.success('Saved table data as PDF');
+        break;
+      default:
+        return;
+    }
   }
 
   // Add state for filter value and placeholder filter logic
   const [filterValue, setFilterValue] = React.useState('');
   // TODO: Implement actual table filtering using filterValue
+
+  function handleDragEnd() {
+    // No-op for now
+  }
 
   return (
     <div className="w-full flex-col justify-start gap-6" data-testid="data-table-root">
