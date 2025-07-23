@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { AIChatSheet } from '@/components/ai-chat-sheet';
 import { Toaster } from '@/components/ui/sonner';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 
 const geistSans = GeistSans;
 const geistMono = GeistMono;
@@ -31,6 +32,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Analytics mode="auto" />
           <AIChatSheet />
         </ThemeProvider>
         <Toaster />
