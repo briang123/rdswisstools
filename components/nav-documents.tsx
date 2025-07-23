@@ -1,12 +1,6 @@
-"use client"
+'use client';
 
-import {
-  IconDots,
-  IconFolder,
-  IconShare3,
-  IconTrash,
-  type Icon,
-} from "@tabler/icons-react"
+import { IconDots, IconFolder, IconShare3, IconTrash, type Icon } from '@tabler/icons-react';
 
 import {
   DropdownMenu,
@@ -14,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -23,18 +17,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
 export function NavDocuments({
   items,
 }: {
   items: {
-    name: string
-    url: string
-    icon: Icon
-  }[]
+    name: string;
+    url: string;
+    icon: Icon;
+  }[];
 }) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -42,7 +36,10 @@ export function NavDocuments({
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton
+              asChild
+              data-testid={`nav-documents-link-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
+            >
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
@@ -53,6 +50,7 @@ export function NavDocuments({
                 <SidebarMenuAction
                   showOnHover
                   className="data-[state=open]:bg-accent rounded-sm"
+                  data-testid={`nav-documents-action-${item.name.toLowerCase().replace(/\s+/g, '-')}`}
                 >
                   <IconDots />
                   <span className="sr-only">More</span>
@@ -60,8 +58,8 @@ export function NavDocuments({
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="w-24 rounded-lg"
-                side={isMobile ? "bottom" : "right"}
-                align={isMobile ? "end" : "start"}
+                side={isMobile ? 'bottom' : 'right'}
+                align={isMobile ? 'end' : 'start'}
               >
                 <DropdownMenuItem>
                   <IconFolder />
@@ -88,5 +86,5 @@ export function NavDocuments({
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

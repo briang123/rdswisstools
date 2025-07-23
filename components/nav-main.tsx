@@ -29,6 +29,7 @@ export function NavMain({
             <SidebarMenuButton
               tooltip="Create Event"
               className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
+              data-testid="nav-main-create-event"
             >
               <IconCirclePlusFilled />
               <span>Create Event</span>
@@ -46,7 +47,11 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild tooltip={item.title}>
+              <SidebarMenuButton
+                asChild
+                tooltip={item.title}
+                data-testid={`nav-main-link-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
+              >
                 <Link href={item.url}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>

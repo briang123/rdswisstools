@@ -81,6 +81,7 @@ export function AIChatSheet() {
             padding: 0,
           }}
           aria-label="Open AI Chat"
+          data-testid="chat-open-button"
         >
           <span style={{ fontSize: 28 }}>💬</span>
         </Button>
@@ -104,6 +105,7 @@ export function AIChatSheet() {
             borderLeft: '1px solid var(--border)',
             transition: 'width 0.1s',
           }}
+          data-testid="chat-window"
         >
           {/* Drag handle */}
           <div
@@ -125,6 +127,7 @@ export function AIChatSheet() {
             aria-label="Resize chat sidebar"
             tabIndex={0}
             role="separator"
+            data-testid="chat-drag-handle"
           >
             <div
               style={{
@@ -153,6 +156,7 @@ export function AIChatSheet() {
               size="icon"
               onClick={() => setOpen(false)}
               aria-label="Close chat"
+              data-testid="chat-close-button"
             >
               <span style={{ fontSize: 22 }}>&times;</span>
             </Button>
@@ -221,11 +225,13 @@ export function AIChatSheet() {
                 color: 'var(--foreground)',
               }}
               autoFocus={open}
+              data-testid="chat-input"
             />
             <Button
               type="submit"
               disabled={!input.trim()}
               style={{ alignSelf: 'flex-end', height: 40 }}
+              data-testid="chat-send-button"
             >
               Send
             </Button>

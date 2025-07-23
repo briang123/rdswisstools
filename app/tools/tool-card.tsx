@@ -43,7 +43,10 @@ export function ToolCard({ cardData }: { cardData: ToolCardData }) {
         </CardTitle>
         <CardAction>
           <a href={cardData.cta.href} className="inline-block">
-            <button className="bg-primary text-primary-foreground rounded px-4 py-1 text-sm font-medium hover:bg-primary/90 transition cursor-pointer">
+            <button
+              className="bg-primary text-primary-foreground rounded px-4 py-1 text-sm font-medium hover:bg-primary/90 transition cursor-pointer"
+              data-testid="tool-card-cta"
+            >
               {cardData.cta.label}
             </button>
           </a>

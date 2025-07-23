@@ -48,6 +48,7 @@ export function NavUser({
             <button
               type="button"
               className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-left text-sm leading-tight hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
+              data-testid="nav-user-menu-toggle"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -80,29 +81,35 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem data-testid="nav-user-menu-account">
                 <IconUserCircle />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem data-testid="nav-user-menu-billing">
                 <IconCreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem data-testid="nav-user-menu-notifications">
                 <IconNotification />
                 Notifications
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/privacy')}>
+              <DropdownMenuItem
+                onClick={() => router.push('/privacy')}
+                data-testid="nav-user-menu-privacy"
+              >
                 <IconShieldLock />
                 Privacy Policy
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/terms')}>
+              <DropdownMenuItem
+                onClick={() => router.push('/terms')}
+                data-testid="nav-user-menu-terms"
+              >
                 <IconFileText />
                 Terms & Conditions
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem data-testid="nav-user-menu-logout">
               <IconLogout />
               Log out
             </DropdownMenuItem>

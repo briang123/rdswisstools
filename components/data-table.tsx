@@ -206,11 +206,11 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
       id: 'actions',
       cell: ({ row }) => (
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button className="data-[state=open]:bg-muted text-muted-foreground flex size-8">
+          <DropdownMenuTrigger asChild>
+            <span className="data-[state=open]:bg-muted text-muted-foreground flex size-8 cursor-pointer rounded hover:bg-muted transition">
               <IconDotsVertical />
               <span className="sr-only">Open menu</span>
-            </button>
+            </span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-32">
             <DropdownMenuItem onClick={() => alert(`Edit row ${row.id}`)}>Edit</DropdownMenuItem>
@@ -282,7 +282,7 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
   // TODO: Implement actual table filtering using filterValue
 
   return (
-    <div className="w-full flex-col justify-start gap-6">
+    <div className="w-full flex-col justify-start gap-6" data-testid="data-table-root">
       <div className="flex items-center justify-between gap-2 px-4 lg:px-6 mb-4">
         {/* Filter input on the left */}
         <Input
@@ -290,9 +290,10 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
           className="max-w-xs rounded-md border"
           value={filterValue}
           onChange={(e) => setFilterValue(e.target.value)}
+          data-testid="data-table-filter-input"
         />
         {/* Menubar on the right */}
-        <Menubar className="bg-muted border rounded-md shadow-sm">
+        <Menubar className="bg-muted border rounded-md shadow-sm" data-testid="data-table-menubar">
           <MenubarMenu>
             <MenubarTrigger>
               <IconCopy className="mr-2" />
@@ -458,6 +459,7 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
                 className="hidden h-8 w-8 p-0 lg:flex"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
+                data-testid="data-table-first-page"
               >
                 <span className="sr-only">Go to first page</span>
                 <IconChevronsLeft />
@@ -468,6 +470,7 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
                 size="icon"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
+                data-testid="data-table-prev-page"
               >
                 <span className="sr-only">Go to previous page</span>
                 <IconChevronLeft />
@@ -478,6 +481,7 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
                 size="icon"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
+                data-testid="data-table-next-page"
               >
                 <span className="sr-only">Go to next page</span>
                 <IconChevronRight />
@@ -488,6 +492,7 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
+                data-testid="data-table-last-page"
               >
                 <span className="sr-only">Go to last page</span>
                 <IconChevronsRight />

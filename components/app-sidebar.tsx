@@ -208,8 +208,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="#">
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              data-testid="sidebar-menu-home"
+            >
+              <a href="#" data-testid="sidebar-link-home">
                 <IconTrophy className="!size-5" />
                 <span className="text-base font-semibold">RD Event Tools</span>
               </a>
@@ -226,6 +230,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuButton
                   tooltip="Create Event"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear cursor-not-allowed"
+                  data-testid="sidebar-menu-create-event"
                 >
                   <IconCirclePlusFilled />
                   <span>Create Event</span>
@@ -245,6 +250,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           <a
                             href={item.url}
                             className="flex flex-1 items-center gap-2 px-2 py-2 rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+                            data-testid={`sidebar-link-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
                           >
                             {item.icon && <item.icon />}
                             <span>{item.title}</span>
@@ -264,7 +270,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           <SidebarMenuSub>
                             {item.submenu.map((sub) => (
                               <SidebarMenuSubItem key={sub.title}>
-                                <SidebarMenuSubButton asChild>
+                                <SidebarMenuSubButton
+                                  asChild
+                                  data-testid={`sidebar-submenu-link-${sub.title.toLowerCase().replace(/\s+/g, '-')}`}
+                                >
                                   <a href={sub.url}>
                                     {sub.icon && <sub.icon />}
                                     <span>{sub.title}</span>

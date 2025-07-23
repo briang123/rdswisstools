@@ -9,13 +9,19 @@ export function useFileUpload() {
     const formData = new FormData();
     formData.append('file', file);
     try {
+      // eslint-disable-next-line no-console
+      console.log('USING FETCH FOR UPLOAD');
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
       const data = await res.json();
+      // eslint-disable-next-line no-console
+      console.log('UPLOAD API RESPONSE', { ok: res.ok, data });
       if (res.ok && data.success) {
-        toast.success(data.message || 'File uploaded successfully!');
+        // eslint-disable-next-line no-console
+        console.log('TRIGGERING TOAST', data.message || 'File uploaded successfully!');
+        toast.success(data.message || 'File uploaded successfully!', { duration: 5000 });
         onSuccess?.();
       } else {
         toast.error(data.message || 'Failed to upload file.');

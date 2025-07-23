@@ -10,6 +10,7 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { uploading, uploadFile } = useFileUpload();
   const { dragActive, handleDrag, handleDrop } = useDragAndDrop((file) => setSelectedFile(file));
+  const [debugMsg, setDebugMsg] = useState<string>('');
 
   const handleFile = (file: File) => {
     setSelectedFile(file);
@@ -23,7 +24,9 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
 
   const handleImport = async () => {
     if (!selectedFile) return;
+    setDebugMsg('Upload started: ' + selectedFile.name);
     await uploadFile(selectedFile, () => {
+      setDebugMsg('Upload complete: ' + selectedFile.name);
       onFile(selectedFile);
       setSelectedFile(null);
     });
@@ -37,6 +40,7 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
         accept={ACCEPTED_TYPES.join(',')}
         className="hidden"
         onChange={handleChange}
+        data-testid="file-input"
       />
       <div
         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${dragActive ? 'border-primary bg-primary/10' : 'border-muted'}`}
@@ -46,6 +50,7 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
         onDragLeave={handleDrag}
         onDrop={handleDrop}
         style={{ cursor: 'pointer' }}
+        data-testid="file-drop-area"
       >
         <p className="mb-2 text-muted-foreground">
           Drag and drop a file here, or{' '}
@@ -62,14 +67,21 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
             <button
               className="bg-primary text-primary-foreground rounded px-4 py-1 text-sm font-medium hover:bg-primary/90 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={(e) => {
+                setDebugMsg('Import File button clicked: ' + selectedFile.name);
                 e.stopPropagation();
                 handleImport();
               }}
               disabled={!selectedFile || uploading}
               type="button"
+              data-testid="import-file-button"
             >
               {uploading ? 'Uploading...' : 'Import File'}
             </button>
+          </div>
+        )}
+        {debugMsg && (
+          <div data-testid="debug-msg" className="mt-4 text-xs text-red-500">
+            {debugMsg}
           </div>
         )}
       </div>

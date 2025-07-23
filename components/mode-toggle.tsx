@@ -34,6 +34,7 @@ export function ModeToggle() {
       aria-label="Toggle dark mode"
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       className="flex items-center justify-center"
+      data-testid="mode-toggle-button"
     >
       {resolvedTheme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
       <span className="sr-only">Toggle dark mode</span>

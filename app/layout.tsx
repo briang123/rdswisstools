@@ -4,6 +4,7 @@ import { GeistMono } from 'geist/font/mono';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { AIChatSheet } from '@/components/ai-chat-sheet';
+import { Toaster } from '@/components/ui/sonner';
 
 const geistSans = GeistSans;
 const geistMono = GeistMono;
@@ -31,6 +32,7 @@ export default function RootLayout({
           {children}
           <AIChatSheet />
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   );
