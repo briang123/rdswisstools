@@ -9,7 +9,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
-import { DataTable } from '@/components/data-table';
+import { DataTable } from '@/components/table/data-table';
 import React from 'react';
 import { FileUploader } from '../file-uploader';
 import { ResultsCleanerClientArea } from './client-area';
