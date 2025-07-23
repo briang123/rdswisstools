@@ -47,20 +47,20 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { PaginationControls } from '../ui/pagination-controls';
-import { ColumnVisibilityMenu } from '../ui/column-visibility-menu';
-import { RowActionsMenu } from '../ui/row-actions-menu';
+import { PaginationControls } from '@/components/table/ui/pagination-controls';
+import { ColumnVisibilityMenu } from '@/components/table/ui/column-visibility-menu';
+import { RowActionsMenu } from '@/components/table/ui/row-actions-menu';
 import { TableHeaderCheckbox } from '@/components/table/core/TableHeaderCheckbox';
 
 // Local table abstractions
-import { useDataTable } from '../core/use-data-table';
-import { FiltersUI } from '../ui/filters-ui';
-import { ExportUI } from '../ui/export-ui';
-import { DragHandle } from '../ui/DragHandle';
-import { handleCopy, handleSave } from '../utils/utils';
-import { FILTER_OPERATORS } from '../ui/filters-ui.types';
-import { customFilterFn, globalFilterFn } from '../utils/filters';
-import type { ExportFormat } from '../utils/utils';
+import { useDataTable } from '@/components/table/core/use-data-table';
+import { FiltersUI } from '@/components/table/ui/filters-ui';
+import { ExportUI } from '@/components/table/ui/export-ui';
+import { DragHandle } from '@/components/table/ui/DragHandle';
+import { handleCopy, handleSave } from '@/components/table/utils/utils';
+import { FILTER_OPERATORS } from '@/components/table/ui/filters-ui.types';
+import { customFilterFn, globalFilterFn } from '@/components/table/utils/filters';
+import type { ExportFormat } from '@/components/table/utils/utils';
 
 export function DataTable({ data }: { data: Record<string, unknown>[] }) {
   const {
