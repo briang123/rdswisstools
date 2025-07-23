@@ -47,19 +47,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { PaginationControls } from './ui/pagination-controls';
-import { ColumnVisibilityMenu } from './ui/column-visibility-menu';
-import { RowActionsMenu } from './ui/row-actions-menu';
+import { PaginationControls } from '../ui/pagination-controls';
+import { ColumnVisibilityMenu } from '../ui/column-visibility-menu';
+import { RowActionsMenu } from '../ui/row-actions-menu';
 
 // Local table abstractions
-import { useDataTable } from './core/use-data-table';
-import { FiltersUI } from './ui/filters-ui';
-import { ExportUI } from './ui/export-ui';
-import { DragHandle } from './ui/DragHandle';
-import { handleCopy, handleSave } from './utils/utils';
-import { FILTER_OPERATORS } from './ui/filters-ui.types';
-import { customFilterFn, globalFilterFn } from './utils/filters';
-import type { ExportFormat } from './utils/utils';
+import { useDataTable } from '../core/use-data-table';
+import { FiltersUI } from '../ui/filters-ui';
+import { ExportUI } from '../ui/export-ui';
+import { DragHandle } from '../ui/DragHandle';
+import { handleCopy, handleSave } from '../utils/utils';
+import { FILTER_OPERATORS } from '../ui/filters-ui.types';
+import { customFilterFn, globalFilterFn } from '../utils/filters';
+import type { ExportFormat } from '../utils/utils';
 
 export function DataTable({ data }: { data: Record<string, unknown>[] }) {
   const {
@@ -265,8 +265,8 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
         </div>
         {/* Menubar on the right */}
         <ExportUI
-          onCopy={(format: ExportFormat) => handleCopy(format, data, visibleColumns, toast)}
-          onSave={(format: ExportFormat) => handleSave(format, data, visibleColumns, toast)}
+          onCopy={(format) => handleCopy(format as ExportFormat, data, visibleColumns, toast)}
+          onSave={(format) => handleSave(format as ExportFormat, data, visibleColumns, toast)}
         />
         <ColumnVisibilityMenu
           columns={table

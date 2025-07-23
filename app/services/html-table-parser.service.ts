@@ -62,10 +62,17 @@ export class HtmlTableParserService implements ParserGateway {
     const items = Array.from(list.querySelectorAll('li'));
     if (items.length === 0) return [];
     // Try to split by colon or dash for key-value
-    return items.map((item) => {
+    return items.map((item, idx) => {
       const text = item.textContent?.trim() || '';
-      const [key, ...rest] = text.split(/:|-/);
-      return { [key.trim()]: rest.join(':').trim() };
+      const match = text.match(/^([^:–-]+)[:–-](.*)$/); // match key: value or key- value
+      if (match) {
+        const key = match[1].trim();
+        const value = match[2].trim();
+        return { [key]: value };
+      } else {
+        // fallback: use generic key
+        return { [`item${idx + 1}`]: text };
+      }
     });
   }
 

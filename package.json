@@ -1,5 +1,5 @@
 {
-  "name": "rd-swiss-tools",
+  "name": "race-tools",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -60,8 +60,10 @@
     "@playwright/test": "^1.54.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/react": "^16.3.0",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
+    "@types/papaparse": "^5.3.16",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

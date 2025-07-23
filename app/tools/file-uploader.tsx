@@ -11,7 +11,7 @@ export function FileUploader({
   children,
 }: {
   onFile: (file: File) => void;
-  children?: React.ReactNode;
+  children?: React.ReactElement<React.ComponentPropsWithoutRef<'button'>>;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -108,25 +108,31 @@ export function FileUploader({
                   {uploading ? 'Uploading...' : 'Import File'}
                 </Button>
                 {children &&
-                  React.cloneElement(children as React.ReactElement, {
-                    onClick: (e: React.MouseEvent) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      if (children.props.onClick) children.props.onClick(e);
-                    },
-                  })}
+                  React.cloneElement(
+                    children as React.ReactElement<React.ComponentPropsWithoutRef<'button'>>,
+                    {
+                      onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        if (children.props.onClick) children.props.onClick(e);
+                      },
+                    } as React.ComponentPropsWithoutRef<'button'>,
+                  )}
               </div>
             </>
           )}
           {!selectedFile &&
             children &&
-            React.cloneElement(children as React.ReactElement, {
-              onClick: (e: React.MouseEvent) => {
-                e.stopPropagation();
-                e.preventDefault();
-                if (children.props.onClick) children.props.onClick(e);
-              },
-            })}
+            React.cloneElement(
+              children as React.ReactElement<React.ComponentPropsWithoutRef<'button'>>,
+              {
+                onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  if (children.props.onClick) children.props.onClick(e);
+                },
+              } as React.ComponentPropsWithoutRef<'button'>,
+            )}
         </div>
         {debugMsg && (
           <div data-testid="debug-msg" className="mt-4 text-xs text-red-500">

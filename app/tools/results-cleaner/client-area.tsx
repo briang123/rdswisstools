@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { FileUploader } from '../file-uploader';
-import { DataTable } from '@/components/table/data-table';
+import { DataTable } from '@/components/table/core/data-table';
 import data from '../../data/sample_5k.json';
 import { getParserByFileName } from '../../services/parser-factory';
 import { cleanTableData } from '@/lib/table-data-cleaner';

@@ -23,7 +23,8 @@ export function removeEmptyRows(rows: TableRow[]): TableRow[] {
 /** Remove columns that are empty in all rows */
 export function removeEmptyColumns(rows: TableRow[]): TableRow[] {
   if (rows.length === 0) return rows;
-  const columns = Object.keys(rows[0]);
+  // Collect all unique keys from all rows
+  const columns = Array.from(new Set(rows.flatMap((row) => Object.keys(row))));
   const nonEmptyColumns = columns.filter((col) =>
     rows.some(
       (row) => row[col] !== null && row[col] !== undefined && String(row[col]).trim() !== '',
