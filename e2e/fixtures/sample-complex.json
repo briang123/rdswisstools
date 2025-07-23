@@ -1,0 +1,4 @@
+[
+  { "name": "Alice", "age": 30, "address": { "city": "NY", "zip": 10001 }, "scores": [100, 98] },
+  { "name": "Bob", "age": 25, "address": { "city": "LA" }, "scores": [95, 90] }
+]

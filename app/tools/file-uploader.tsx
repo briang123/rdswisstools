@@ -56,9 +56,7 @@ export function FileUploader({ onFile }: { onFile: (file: File) => void }) {
           Drag and drop a file here, or{' '}
           <span className="text-primary underline">click to select</span> a file
         </p>
-        <p className="text-xs text-muted-foreground">
-          Accepted: CSV, Excel, JSON, Markdown, HTML, Images
-        </p>
+        <p className="text-xs text-muted-foreground">Accepted: CSV, Excel, JSON, Markdown, HTML</p>
         {selectedFile && (
           <div className="mt-4 text-sm text-foreground flex flex-col items-center gap-2">
             <div>

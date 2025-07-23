@@ -9,6 +9,6 @@
   },
   "footer": {
     "main": "Paste or upload race results to automatically clean, fix, and format your data for easy use.",
-    "sub": "Supports copy-paste, CSV, JSON, Markdown, and images (OCR)."
+    "sub": "Supports copy-paste, CSV, JSON, Markdown, Excel, and HTML."
   }
 }

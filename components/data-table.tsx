@@ -141,8 +141,9 @@ function DragHandle({ id }: { id: string }) {
 
 // Remove static columns
 
-export function DataTable({ data: initialData }: { data: unknown[] }) {
-  const [data, setData] = React.useState(() => initialData);
+export function DataTable({ data }: { data: unknown[] }) {
+  // Remove internal state for data
+  // const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -257,11 +258,7 @@ export function DataTable({ data: initialData }: { data: unknown[] }) {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id);
-        const newIndex = dataIds.indexOf(over.id);
-        return arrayMove(data, oldIndex, newIndex);
-      });
+      // Optionally, you can implement row reordering logic here if needed
     }
   }
 

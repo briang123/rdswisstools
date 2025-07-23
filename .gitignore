@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Ignore last run state files
 .last-run.json
+
+# Ignore Playwright error context files
+error-context.md
