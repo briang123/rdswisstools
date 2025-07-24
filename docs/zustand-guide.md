@@ -1,5 +1,129 @@
 # Zustand Guide for Next.js
 
+## Recommended Zustand Architecture for a Race Platform
+
+### 1. Store Structure
+
+**Modular Stores:**
+Split your state into domain-specific stores (e.g., user, race, results, UI). Each store manages a single concern.
+
+**Example Stores:**
+
+- `useUserStore` – authentication, profile, preferences
+- `useRaceStore` – race data, current race, race status
+- `useResultsStore` – results, leaderboards, stats
+- `useUIStore` – modals, notifications, theme
+
+---
+
+### 2. File Organization
+
+```
+/hooks/
+  use-user-store.ts
+  use-race-store.ts
+  use-results-store.ts
+  use-ui-store.ts
+```
+
+---
+
+### 3. Type Safety
+
+- Define types/interfaces for each store’s state and actions.
+- Use Zustand’s middleware for devtools and persistence as needed.
+
+---
+
+### 4. Example Store Implementation
+
+```ts
+// hooks/use-race-store.ts
+import { create } from 'zustand';
+
+interface Race {
+  id: string;
+  name: string;
+  status: 'upcoming' | 'ongoing' | 'finished';
+  participants: string[];
+  // ...other fields
+}
+
+interface RaceStore {
+  races: Race[];
+  currentRaceId: string | null;
+  setRaces: (races: Race[]) => void;
+  setCurrentRace: (id: string) => void;
+  updateRaceStatus: (id: string, status: Race['status']) => void;
+}
+
+export const useRaceStore = create<RaceStore>((set) => ({
+  races: [],
+  currentRaceId: null,
+  setRaces: (races) => set({ races }),
+  setCurrentRace: (id) => set({ currentRaceId: id }),
+  updateRaceStatus: (id, status) =>
+    set((state) => ({
+      races: state.races.map((race) => (race.id === id ? { ...race, status } : race)),
+    })),
+}));
+```
+
+---
+
+### 5. Composing Stores
+
+- Use each store independently in components.
+- For cross-store logic, use selectors or custom hooks that combine state.
+
+---
+
+### 6. Middleware
+
+- Add `zustand/middleware` for devtools, persistence, or immer if needed.
+
+```ts
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+
+export const useUserStore = create(
+  devtools(
+    persist(
+      (set) => ({
+        // ...state and actions
+      }),
+      { name: 'user-storage' },
+    ),
+  ),
+);
+```
+
+---
+
+### 7. Usage Example
+
+```ts
+import { useRaceStore } from '@/hooks/use-race-store';
+
+const races = useRaceStore((state) => state.races);
+const setCurrentRace = useRaceStore((state) => state.setCurrentRace);
+```
+
+---
+
+### 8. Advanced: Zustand Slices
+
+For large stores, use the “slice” pattern to compose state from multiple smaller pieces.
+
+---
+
+**Summary:**
+
+- Modular, domain-specific stores
+- Type-safe interfaces
+- Middleware for devtools/persistence
+- Use hooks in components, combine with selectors as needed
+
 ## 1. Installation
 
 ```bash
@@ -242,3 +366,144 @@ Suppose you’re building a race management platform with these features:
 - [ ] Use context or Zustand if prop drilling becomes excessive
 - [ ] Persist table state (filters, selection, pagination) to localStorage/sessionStorage for better UX
 - [ ] Document all public APIs and provide a migration guide for future Zustand refactors
+
+## Zustand Store Patterns for Various Tools
+
+When building a platform with multiple tools (e.g., file uploaders, data cleaners, analyzers), you can manage their state in Zustand using one of two main patterns:
+
+### 1. Single Store for All Tools
+
+If tools share common state patterns (e.g., loading, error, result), use a single `useToolsStore` with a state slice for each tool.
+
+```ts
+// hooks/use-tools-store.ts
+import { create } from 'zustand';
+
+interface FileUploaderState {
+  file: File | null;
+  uploading: boolean;
+  error: string | null;
+  result: string | null;
+}
+
+interface CleanerState {
+  cleaning: boolean;
+  error: string | null;
+  cleanedData: any;
+}
+
+interface ToolsStore {
+  fileUploader: FileUploaderState;
+  cleaner: CleanerState;
+  setFileUploader: (state: Partial<FileUploaderState>) => void;
+  setCleaner: (state: Partial<CleanerState>) => void;
+  resetTools: () => void;
+}
+
+const initialFileUploader: FileUploaderState = {
+  file: null,
+  uploading: false,
+  error: null,
+  result: null,
+};
+
+const initialCleaner: CleanerState = {
+  cleaning: false,
+  error: null,
+  cleanedData: null,
+};
+
+export const useToolsStore = create<ToolsStore>((set) => ({
+  fileUploader: initialFileUploader,
+  cleaner: initialCleaner,
+  setFileUploader: (state) => set((s) => ({ fileUploader: { ...s.fileUploader, ...state } })),
+  setCleaner: (state) => set((s) => ({ cleaner: { ...s.cleaner, ...state } })),
+  resetTools: () =>
+    set({
+      fileUploader: initialFileUploader,
+      cleaner: initialCleaner,
+    }),
+}));
+```
+
+---
+
+### 2. Separate Stores per Tool
+
+If tools are complex or have very different state needs, create a store per tool (e.g., `useFileUploaderStore`, `useCleanerStore`).
+
+```ts
+// hooks/use-file-uploader-store.ts
+import { create } from 'zustand';
+
+interface FileUploaderState {
+  file: File | null;
+  uploading: boolean;
+  error: string | null;
+  result: string | null;
+  setFile: (file: File | null) => void;
+  setUploading: (uploading: boolean) => void;
+  setError: (error: string | null) => void;
+  setResult: (result: string | null) => void;
+}
+
+export const useFileUploaderStore = create<FileUploaderState>((set) => ({
+  file: null,
+  uploading: false,
+  error: null,
+  result: null,
+  setFile: (file) => set({ file }),
+  setUploading: (uploading) => set({ uploading }),
+  setError: (error) => set({ error }),
+  setResult: (result) => set({ result }),
+}));
+```
+
+---
+
+### 3. When to Use Each Pattern
+
+- **Single Store:**
+  - Tools are simple, share similar state, or you want to reset all tool states at once.
+- **Separate Stores:**
+  - Tools are complex, have unique state, or are used independently in different parts of the app.
+
+---
+
+### 4. Usage Example
+
+```ts
+import { useToolsStore } from '@/hooks/use-tools-store';
+
+const uploading = useToolsStore((s) => s.fileUploader.uploading);
+const setFileUploader = useToolsStore((s) => s.setFileUploader);
+```
+
+or
+
+```ts
+import { useFileUploaderStore } from '@/hooks/use-file-uploader-store';
+
+const uploading = useFileUploaderStore((s) => s.uploading);
+const setUploading = useFileUploaderStore((s) => s.setUploading);
+```
+
+---
+
+### 5. File Organization
+
+```
+/hooks/
+  use-tools-store.ts         // (single store for all tools)
+  use-file-uploader-store.ts // (if using separate stores)
+  use-cleaner-store.ts
+  ...
+```
+
+---
+
+**Summary:**
+
+- Use a single tools store for simple/shared state, or separate stores for complex/independent tools.
+- Type your state and actions for each tool.
+- Organize stores in `/hooks/` for easy import and maintenance.
