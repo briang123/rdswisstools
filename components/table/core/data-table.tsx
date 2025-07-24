@@ -4,20 +4,6 @@
 import * as React from 'react';
 import { toast } from 'sonner';
 
-// dnd-kit
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type UniqueIdentifier,
-} from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-
 // tanstack table
 import {
   ColumnDef,
@@ -56,7 +42,6 @@ import { TableHeaderCheckbox } from '@/components/table/core/TableHeaderCheckbox
 import { useDataTable } from '@/components/table/core/use-data-table';
 import { FiltersUI } from '@/components/table/ui/filters-ui';
 import { ExportUI } from '@/components/table/ui/export-ui';
-import { DragHandle } from '@/components/table/ui/DragHandle';
 import { handleCopy, handleSave } from '@/components/table/utils/utils';
 import { FILTER_OPERATORS } from '@/components/table/ui/filters-ui.types';
 import { customFilterFn, globalFilterFn } from '@/components/table/utils/filters';
@@ -91,22 +76,11 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
     handleApplyFilters,
   } = useDataTable(data);
   const sortableId = React.useId();
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {}),
-  );
+  // Removed sensors and handleDragEnd
 
   // Dynamically generate columns from data keys
   const columns = React.useMemo<ColumnDef<unknown>[]>(() => {
     const baseColumns: ColumnDef<unknown>[] = [
-      {
-        id: 'drag',
-        header: () => null,
-        cell: ({ row }) => <DragHandle id={String(row.id)} />, // Use row.id as string for unique identifier
-        enableSorting: false,
-        enableHiding: false,
-      },
       {
         id: 'select',
         header: ({ table }) => <TableHeaderCheckbox table={table} />,
@@ -165,10 +139,7 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
     return [...baseColumns, ...dataColumns, actionsColumn];
   }, [dataKeys]);
 
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map((_, idx) => String(idx)) || [],
-    [data],
-  );
+  // Removed dataIds
 
   // Global text search state (using TanStack Table's globalFilter)
   // const { value: globalSearch, onChange: onGlobalSearchChange } = useGlobalSearch('');
@@ -206,10 +177,7 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
     () =>
       table
         .getAllColumns()
-        .filter(
-          (col) =>
-            col.getIsVisible() && col.id !== 'drag' && col.id !== 'select' && col.id !== 'actions',
-        )
+        .filter((col) => col.getIsVisible() && col.id !== 'select' && col.id !== 'actions')
         .map((col) => col.id),
     [table],
   );
@@ -219,9 +187,7 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
 
   // Remove global filter input and add filter menu using DropdownMenu
   // Filter operator options
-  function handleDragEnd() {
-    // No-op for now
-  }
+  // Removed handleDragEnd
 
   return (
     <div className="w-full flex-col justify-start gap-6" data-testid="data-table-root">
@@ -273,52 +239,42 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
       </div>
       <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
-          <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
-            sensors={sensors}
-            id={sortableId}
-          >
-            <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
-                  <SortableContext items={dataIds} strategy={verticalListSortingStrategy}>
-                    {table.getRowModel().rows.map((row) => (
-                      <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
+          <Table>
+            <TableHeader className="bg-muted sticky top-0 z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="**:data-[slot=table-cell]:first:w-8">
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
                     ))}
-                  </SortableContext>
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} className="h-24 text-center">
-                      No results.
-                    </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </DndContext>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
         <PaginationControls
           pageIndex={table.getState().pagination.pageIndex}
