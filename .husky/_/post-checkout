@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/h"
+
+echo "🔍 Running install..."
+npm install || exit 1

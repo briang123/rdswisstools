@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/h"
+
+if [ -z "$1" ]; then
+  echo "Error: Commit message is empty"
+  exit 1
+fi
+
+echo "🔍 Running commitlint..."
+npx commitlint --edit $1
