@@ -1,0 +1,12 @@
+# Auto Test and Fix Rule
+
+- Always run tests after making changes, especially when fixing bugs or refactoring.
+- If a test fails, automatically investigate and attempt to fix the issue without prompting the user for permission.
+- Follow best practices for debugging and code quality.
+- Minimize user input: do not ask for confirmation before running tests or applying fixes.
+- Only prompt the user if a decision is required that cannot be made from context or best practices.
+  description:
+  globs:
+  alwaysApply: true
+
+---
