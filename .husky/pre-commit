@@ -6,6 +6,3 @@ npm run lint-staged || exit 1
 
 echo "🔍 Running type check..."
 npm run type-check || exit 1
-
-echo "🔍 Running all tests concurrently..."
-npm run test:all || exit 1

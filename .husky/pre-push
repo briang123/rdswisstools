@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname "$0")/h"
 
-echo "🔍 Running test..."
-npm run test || exit 1
-
-echo "🔍 Running test:e2e..."
-npm run test:e2e || exit 1
+echo "🔍 Running all tests concurrently..."
+npm run test:all || exit 1
