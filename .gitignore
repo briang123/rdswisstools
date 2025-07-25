@@ -46,4 +46,5 @@ next-env.d.ts
 # Ignore Playwright error context files
 error-context.md
 
-.prettierignore
+playwright-report/
+

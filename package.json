@@ -8,14 +8,22 @@
     "start": "next start",
     "lint": "next lint",
     "lint-staged": "lint-staged",
+    "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
+    "test:unit:summary": "jest --reporters=default --reporters=jest-summary-reporter",
+    "test:e2e:html": "playwright test --reporter=html",
+    "test:e2e:line": "playwright test --reporter=line",
+    "test:e2e:dot": "playwright test --reporter=dot",
+    "test:e2e:list": "playwright test --reporter=list",
     "test:e2e:ui": "playwright test --ui",
+    "test:all": "concurrently \"npm run test\" \"npm run test:e2e\"",
     "dev:test:watch": "concurrently \"next dev\" \"jest --watch\"",
-    "format": "prettier --write .",
-    "commit": "cz"
+    "commit": "cz",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write ."
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
@@ -56,6 +64,7 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@commitlint/config-conventional": "^19.8.1",
     "@eslint/eslintrc": "^3",
     "@playwright/test": "^1.54.1",
     "@tailwindcss/postcss": "^4",
@@ -75,6 +84,7 @@
     "husky": "^9.1.7",
     "jest": "^30.0.5",
     "jest-environment-jsdom": "^30.0.5",
+    "jest-summary-reporter": "^0.0.2",
     "lint-staged": "^16.1.2",
     "playwright": "^1.54.1",
     "prettier": "^3.6.2",
@@ -87,5 +97,14 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,css,md}": [
+      "prettier --write"
+    ]
   }
 }

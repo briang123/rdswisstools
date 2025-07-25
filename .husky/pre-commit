@@ -4,14 +4,8 @@
 echo "🔍 Running lint..."
 npm run lint-staged || exit 1
 
-echo "💅 Running prettier..."
-npm run prettier:check || exit 1
-
 echo "🔍 Running type check..."
 npm run type-check || exit 1
 
-echo "🔍 Running test..."
-npm run test || exit 1
-
-echo "🔍 Running test:e2e..."
-npm run test:e2e || exit 1
+echo "🔍 Running all tests concurrently..."
+npm run test:all || exit 1
