@@ -10,15 +10,16 @@ import confetti from 'canvas-confetti';
 import { PasteDataDrawer } from '@/components/paste-data-drawer';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { useStore } from 'zustand';
 
 export function ResultsCleanerClientArea() {
   // Use Zustand store for file import and table data (dynamic table key)
   const useTableStore = useTableStoreFactory('results-cleaner');
-  const file = useTableStore((s: TableFileImportState) => s.file);
-  const setFile = useTableStore((s: TableFileImportState) => s.setFile);
-  const resetFile = useTableStore((s: TableFileImportState) => s.resetFile);
-  const tableData = useTableStore((s: TableFileImportState) => s.tableData);
-  const setTableData = useTableStore((s: TableFileImportState) => s.setTableData);
+  const file = useStore(useTableStore, (s) => s.file);
+  const setFile = useStore(useTableStore, (s) => s.setFile);
+  const resetFile = useStore(useTableStore, (s) => s.resetFile);
+  const tableData = useStore(useTableStore, (s) => s.tableData);
+  const setTableData = useStore(useTableStore, (s) => s.setTableData);
   const [debugMsg, setDebugMsg] = useState('');
 
   async function handleFile(file: File) {

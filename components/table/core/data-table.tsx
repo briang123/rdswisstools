@@ -78,8 +78,9 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
     setSorting,
     pagination,
     setPagination,
-    value: globalSearch,
-    setValue: onGlobalSearchChange,
+    globalSearch,
+    setGlobalSearch,
+    debouncedGlobalSearch,
     filterMenuOpen,
     setFilterMenuOpen,
     logicType,
@@ -108,10 +109,10 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
       rowSelection,
       columnFilters,
       pagination,
-      globalFilter: globalSearch,
+      globalFilter: debouncedGlobalSearch,
     },
     globalFilterFn: globalFilterFn as unknown as FilterFn<unknown>,
-    onGlobalFilterChange: onGlobalSearchChange,
+    onGlobalFilterChange: setGlobalSearch,
     getRowId: (_row, idx) => idx.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -134,7 +135,7 @@ export function DataTable({ data }: { data: Record<string, unknown>[] }) {
     <DataTableContainer>
       <TableToolbar
         globalSearch={globalSearch}
-        onGlobalSearchChange={onGlobalSearchChange}
+        onGlobalSearchChange={setGlobalSearch}
         filterMenuOpen={filterMenuOpen}
         setFilterMenuOpen={setFilterMenuOpen}
         draftFilters={draftFilters}
