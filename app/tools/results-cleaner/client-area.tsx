@@ -1,15 +1,27 @@
 'use client';
-import { useState } from 'react';
+import { useTableStoreFactory } from '@/hooks/use-table-store';
+import type { TableFileImportState } from '@/hooks/use-table-store';
 import { FileUploader } from '../file-uploader';
 import { DataTable } from '@/components/table/core/data-table';
-import data from '../../data/sample_5k.json';
+import data from '@/app/data/sample_5k.json';
 import { getParserByFileName } from '../../services/parser-factory';
 import { cleanTableData } from '@/lib/table-data-cleaner';
 import confetti from 'canvas-confetti';
 import { PasteDataDrawer } from '@/components/paste-data-drawer';
 
 export function ResultsCleanerClientArea() {
-  const [tableData, setTableData] = useState<Record<string, unknown>[]>(data);
+  // Use Zustand store for file import and table data (dynamic table key)
+  const useTableStore = useTableStoreFactory('results-cleaner');
+  // const file = useTableStore((s: TableFileImportState) => s.file);
+  // const setFile = useTableStore((s: TableFileImportState) => s.setFile);
+  // const resetFile = useTableStore((s: TableFileImportState) => s.resetFile);
+  const tableData = useTableStore((s: TableFileImportState) => s.tableData);
+  const setTableData = useTableStore((s: TableFileImportState) => s.setTableData);
+
+  // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const selectedFile = e.target.files?.[0] || null;
+  //   setFile(selectedFile);
+  // };
 
   async function handleFile(file: File) {
     setTableData([]);
@@ -33,7 +45,6 @@ export function ResultsCleanerClientArea() {
       <FileUploader onFile={handleFile}>
         <PasteDataDrawer
           onParsed={(result) => {
-            // Accept only arrays of records
             if (
               result &&
               typeof result === 'object' &&

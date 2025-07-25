@@ -1,5 +1,15 @@
 # Zustand Guide for Next.js
 
+## Resources
+
+- https://zustand.docs.pmnd.rs/getting-started/introduction
+- https://zustand.docs.pmnd.rs/guides/nextjs
+- https://zustand.docs.pmnd.rs/guides/ssr-and-hydration
+- https://zustand.docs.pmnd.rs/integrations/persisting-store-data
+- https://zustand.docs.pmnd.rs/guides/auto-generating-selectors
+- https://zustand.docs.pmnd.rs/guides/testing
+- https://zustand.docs.pmnd.rs/guides/typescript
+
 ## Recommended Zustand Architecture for a Race Platform
 
 ### 1. Store Structure
@@ -507,3 +517,74 @@ const setUploading = useFileUploaderStore((s) => s.setUploading);
 - Use a single tools store for simple/shared state, or separate stores for complex/independent tools.
 - Type your state and actions for each tool.
 - Organize stores in `/hooks/` for easy import and maintenance.
+
+---
+
+## 9. Table Store Public API & Migration Guide
+
+### Table Store Public API
+
+The table state (selection, sorting, pagination, filters, global search, etc.) is managed via a dynamic Zustand store factory:
+
+```ts
+import { useTableStoreFactory } from '@/hooks/use-table-store';
+
+// Create a store for your table with a unique key
+export const useTableStore = useTableStoreFactory('table-state-main');
+
+// For another table:
+export const useUsersTableStore = useTableStoreFactory('table-state-users');
+```
+
+**Store API:**
+
+- `rowSelection`, `setRowSelection`
+- `sorting`, `setSorting`
+- `pagination`, `setPagination`
+- `columnFilters`, `setColumnFilters`
+- `filterMenuOpen`, `setFilterMenuOpen`
+- `logicType`, `setLogicType`
+- `draftFilters`, `setDraftFilters`
+- `newFilter`, `setNewFilter`
+- `globalSearch`, `setGlobalSearch`
+
+All state is persisted in localStorage under the provided key.
+
+### Migration Guide: From Custom Hooks to Zustand
+
+**Before:**
+
+```ts
+const { rowSelection, setRowSelection } = useTableSelection();
+const { sorting, setSorting } = useTableSorting();
+const { pagination, setPagination } = useTablePagination();
+const { columnFilters, setColumnFilters } = useTableFilters(...);
+const globalSearchState = useGlobalSearch('');
+```
+
+**After:**
+
+```ts
+import { useTableStore } from '@/hooks/use-table-store';
+
+const rowSelection = useTableStore((s) => s.rowSelection);
+const setRowSelection = useTableStore((s) => s.setRowSelection);
+const sorting = useTableStore((s) => s.sorting);
+const setSorting = useTableStore((s) => s.setSorting);
+const pagination = useTableStore((s) => s.pagination);
+const setPagination = useTableStore((s) => s.setPagination);
+const columnFilters = useTableStore((s) => s.columnFilters);
+const setColumnFilters = useTableStore((s) => s.setColumnFilters);
+const globalSearch = useTableStore((s) => s.globalSearch);
+const setGlobalSearch = useTableStore((s) => s.setGlobalSearch);
+// ...and so on for other state/actions
+```
+
+**Key Migration Steps:**
+
+1. Remove all custom hooks for table state (e.g., `useTableSelection`, `useTableSorting`, etc.).
+2. Replace all usages with Zustand selectors from your table store.
+3. If you have multiple tables, create a store for each with a unique key.
+4. All state is now global and persisted; no more prop drilling or local state needed.
+
+---

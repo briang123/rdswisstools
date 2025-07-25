@@ -61,7 +61,8 @@
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",
     "xlsx": "^0.18.5",
-    "zod": "^4.0.5"
+    "zod": "^4.0.5",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.8.1",
